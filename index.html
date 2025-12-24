@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nuestro Portal</title>
+    <meta
+      name="description"
+      content="Un portal intimo para navegar recuerdos, peliculas y razones."
+    />
+    <link rel="icon" type="image/png" href="resources/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="resources/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="resources/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="resources/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Our Portal" />
+    <link rel="manifest" href="resources/favicon/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Space+Grotesk:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0e1015;
+        --bg-2: #161b26;
+        --card: rgba(27, 32, 44, 0.86);
+        --text: #f2efe9;
+        --muted: #c8c2ba;
+        --accent: #d5b1a1;
+        --accent-2: #b4909e;
+        --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+        --radius: 20px;
+        --container: 980px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        background: radial-gradient(
+            1200px circle at 20% 10%,
+            rgba(213, 177, 161, 0.18),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px circle at 85% 20%,
+            rgba(180, 144, 158, 0.16),
+            transparent 55%
+          ),
+          linear-gradient(160deg, var(--bg), var(--bg-2));
+        color: var(--text);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+            circle at 20% 30%,
+            rgba(255, 255, 255, 0.04),
+            transparent 35%
+          ),
+          radial-gradient(
+            circle at 80% 70%,
+            rgba(255, 255, 255, 0.03),
+            transparent 45%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      main {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        padding: 72px 20px 64px;
+      }
+
+      .shell {
+        width: min(100%, var(--container));
+        display: grid;
+        gap: 32px;
+      }
+
+      header {
+        display: grid;
+        gap: 18px;
+        text-align: center;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .brand img {
+        width: 26px;
+        height: 26px;
+        object-fit: contain;
+        filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.45));
+      }
+
+      h1 {
+        margin: 0;
+        font-family: "Playfair Display", "Times New Roman", serif;
+        font-weight: 600;
+        font-size: clamp(32px, 4vw, 52px);
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: clamp(15px, 2vw, 18px);
+      }
+
+      .portal {
+        display: grid;
+        gap: 16px;
+      }
+
+      .link-card {
+        position: relative;
+        display: grid;
+        gap: 6px;
+        padding: 22px 24px;
+        background: var(--card);
+        border-radius: var(--radius);
+        text-align: center;
+        justify-items: center;
+        width: min(100%, 560px);
+        min-height: 120px;
+        justify-self: center;
+        text-decoration: none;
+        color: inherit;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transform: translateY(18px);
+        opacity: 0;
+        animation: fade-up 0.7s ease forwards;
+        animation-delay: var(--d, 0s);
+        transition: transform 0.35s ease, border-color 0.35s ease,
+          box-shadow 0.35s ease;
+      }
+
+      .portal-film {
+        --portal-accent: rgba(220, 79, 74, 0.45);
+        --portal-glow: rgba(220, 79, 74, 0.22);
+        --portal-bloom: rgba(220, 79, 74, 0.22);
+      }
+
+      .portal-love {
+        --portal-accent: rgba(213, 143, 166, 0.38);
+        --portal-glow: rgba(213, 143, 166, 0.24);
+        --portal-bloom: rgba(213, 143, 166, 0.22);
+      }
+
+      .portal-countdown {
+        --portal-accent: rgba(214, 174, 106, 0.45);
+        --portal-glow: rgba(214, 174, 106, 0.22);
+        --portal-bloom: rgba(214, 174, 106, 0.22);
+      }
+
+      .portal-map {
+        --portal-accent: rgba(110, 184, 165, 0.45);
+        --portal-glow: rgba(110, 184, 165, 0.22);
+        --portal-bloom: rgba(110, 184, 165, 0.22);
+      }
+
+      .portal-playlist {
+        --portal-accent: rgba(116, 156, 223, 0.45);
+        --portal-glow: rgba(116, 156, 223, 0.22);
+        --portal-bloom: rgba(116, 156, 223, 0.22);
+      }
+
+      .portal-random {
+        --portal-accent: rgba(224, 142, 86, 0.45);
+        --portal-glow: rgba(224, 142, 86, 0.22);
+        --portal-bloom: rgba(224, 142, 86, 0.22);
+      }
+
+      .link-card::before {
+        content: "";
+        position: absolute;
+        width: 140px;
+        height: 140px;
+        border-radius: 999px;
+        border: 1px solid var(--portal-accent, rgba(213, 177, 161, 0.3));
+        top: -54px;
+        right: -54px;
+        opacity: 0.45;
+        box-shadow: inset 0 0 24px var(--portal-glow, rgba(213, 177, 161, 0.22)),
+          0 0 28px var(--portal-bloom, rgba(213, 177, 161, 0.18));
+        transition: transform 0.5s ease, opacity 0.35s ease;
+      }
+
+      .link-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          120deg,
+          rgba(213, 177, 161, 0.15),
+          transparent 60%
+        );
+        opacity: 0;
+        transition: opacity 0.35s ease;
+      }
+
+      .link-card .portal-core {
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius);
+        background: radial-gradient(
+          420px circle at 120% -20%,
+          var(--portal-glow, rgba(213, 177, 161, 0.2)),
+          transparent 55%
+        );
+        opacity: 0.7;
+        transition: opacity 0.4s ease;
+        z-index: 0;
+      }
+
+      .link-card:hover,
+      .link-card:focus-visible {
+        transform: translateY(4px);
+        border-color: var(--portal-accent, rgba(213, 177, 161, 0.6));
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+
+      .link-card:hover::before,
+      .link-card:focus-visible::before {
+        transform: scale(1.08);
+        opacity: 0.7;
+      }
+
+      .link-card:hover::after,
+      .link-card:focus-visible::after {
+        opacity: 1;
+      }
+
+      .link-card:hover .portal-core,
+      .link-card:focus-visible .portal-core {
+        opacity: 1;
+      }
+
+      .link-card .link-title,
+      .link-card .link-desc,
+      .link-card .portal-content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .portal-content {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 6px;
+        justify-items: center;
+      }
+
+      .portal-locked .portal-content {
+        filter: blur(6px);
+        opacity: 0.32;
+      }
+
+      .portal-locked .portal-core {
+        filter: blur(6px);
+        opacity: 0.35;
+      }
+
+      .portal-lock {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        z-index: 2;
+        color: #e3e3e3;
+        pointer-events: none;
+      }
+
+      .portal-lock svg {
+        width: 56px;
+        height: 56px;
+        filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.35));
+      }
+
+      .portal-lock path {
+        fill: currentColor !important;
+      }
+
+      .lock-modal {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(8, 10, 14, 0.6);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+        z-index: 10;
+      }
+
+      .lock-modal.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .lock-modal-card {
+        padding: 18px 28px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(20, 22, 30, 0.92);
+        color: var(--text);
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      body.modal-open main {
+        filter: blur(6px);
+      }
+
+      .link-title {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text);
+        border: 1px solid var(--portal-accent, rgba(213, 177, 161, 0.35));
+        background: linear-gradient(
+          120deg,
+          rgba(255, 255, 255, 0.04),
+          var(--portal-glow, rgba(213, 177, 161, 0.12))
+        );
+      }
+
+      .link-logo {
+        width: min(260px, 70vw);
+        height: auto;
+        display: block;
+        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35));
+      }
+
+      .link-desc {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      footer {
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      footer span {
+        color: var(--accent);
+      }
+
+      @keyframes fade-up {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 600px) {
+        main {
+          padding: 56px 16px 48px;
+        }
+
+        .link-card {
+          padding: 18px 18px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .link-card {
+          animation: none;
+          opacity: 1;
+          transform: none;
+        }
+
+        .link-card::after {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="shell">
+        <header>
+          <div class="brand">
+            <img src="resources/logos/heart-arrow.png" alt="Corazon con flecha" />
+            <span>Our Portal</span>
+            <img src="resources/logos/heart-arrow.png" alt="Corazon con flecha" />
+          </div>
+          <h1>Un espacio solo para nosotros</h1>
+          <p class="subtitle">
+            Cada portal abre un momento que quiero compartir contigo.
+          </p>
+        </header>
+
+        <section class="portal" aria-label="Portales">
+          <a
+            class="link-card portal-film"
+            href="001 - Nuestra Lista de Pelis/index.html"
+            style="--d: 0.05s"
+          >
+            <span class="portal-core" aria-hidden="true"></span>
+            <span class="link-title">
+              <img
+                class="link-logo"
+                src="001 - Nuestra Lista de Pelis/logos/logo.png"
+                alt="Nuestra Lista de Pelis"
+              />
+            </span>
+            <span class="link-desc">
+              El checklist de las peliculas y series que tenemos que ver.
+            </span>
+          </a>
+
+          <a class="link-card portal-love portal-locked" href="#" style="--d: 0.12s">
+            <span class="portal-core" aria-hidden="true"></span>
+            <div class="portal-content">
+              <span class="link-title">100 cosas por las que te amo</span>
+              <span class="link-desc">
+                Una lista que crece con cada dia que compartimos.
+              </span>
+            </div>
+            <span class="portal-lock" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                x="0px"
+                y="0px"
+                width="24"
+                height="24"
+                viewBox="0,0,255.99431,255.99431"
+              >
+                <g
+                  fill="#e3e3e3"
+                  fill-rule="nonzero"
+                  stroke="none"
+                  stroke-width="1"
+                  stroke-linecap="butt"
+                  stroke-linejoin="miter"
+                  stroke-miterlimit="10"
+                  stroke-dasharray=""
+                  stroke-dashoffset="0"
+                  font-family="none"
+                  font-weight="none"
+                  font-size="none"
+                  text-anchor="none"
+                  style="mix-blend-mode: normal"
+                >
+                  <g transform="scale(10.66667,10.66667)">
+                    <path
+                      d="M12,1c-3.32381,0 -6,2.67619 -6,6v1c-1.09306,0 -2,0.90694 -2,2v10c0,1.09306 0.90694,2 2,2h12c1.09306,0 2,-0.90694 2,-2v-10c0,-1.09306 -0.90694,-2 -2,-2v-1c0,-3.32381 -2.67619,-6 -6,-6zM12,3c2.27619,0 4,1.72381 4,4v1h-8v-1c0,-2.27619 1.72381,-4 4,-4zM6,10h12v10h-12zM12,13c-1.1,0 -2,0.9 -2,2c0,1.1 0.9,2 2,2c1.1,0 2,-0.9 2,-2c0,-1.1 -0.9,-2 -2,-2z"
+                    ></path>
+                  </g>
+                </g>
+              </svg>
+            </span>
+          </a>
+
+          <a
+            class="link-card portal-countdown portal-locked"
+            href="#"
+            style="--d: 0.19s"
+          >
+            <span class="portal-core" aria-hidden="true"></span>
+            <div class="portal-content">
+              <span class="link-title">Cuenta Atrás</span>
+              <span class="link-desc">La cuenta atrás para nuestro aniversario.</span>
+            </div>
+            <span class="portal-lock" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                x="0px"
+                y="0px"
+                width="24"
+                height="24"
+                viewBox="0,0,255.99431,255.99431"
+              >
+                <g
+                  fill="#e3e3e3"
+                  fill-rule="nonzero"
+                  stroke="none"
+                  stroke-width="1"
+                  stroke-linecap="butt"
+                  stroke-linejoin="miter"
+                  stroke-miterlimit="10"
+                  stroke-dasharray=""
+                  stroke-dashoffset="0"
+                  font-family="none"
+                  font-weight="none"
+                  font-size="none"
+                  text-anchor="none"
+                  style="mix-blend-mode: normal"
+                >
+                  <g transform="scale(10.66667,10.66667)">
+                    <path
+                      d="M12,1c-3.32381,0 -6,2.67619 -6,6v1c-1.09306,0 -2,0.90694 -2,2v10c0,1.09306 0.90694,2 2,2h12c1.09306,0 2,-0.90694 2,-2v-10c0,-1.09306 -0.90694,-2 -2,-2v-1c0,-3.32381 -2.67619,-6 -6,-6zM12,3c2.27619,0 4,1.72381 4,4v1h-8v-1c0,-2.27619 1.72381,-4 4,-4zM6,10h12v10h-12zM12,13c-1.1,0 -2,0.9 -2,2c0,1.1 0.9,2 2,2c1.1,0 2,-0.9 2,-2c0,-1.1 -0.9,-2 -2,-2z"
+                    ></path>
+                  </g>
+                </g>
+              </svg>
+            </span>
+          </a>
+
+          <a class="link-card portal-map portal-locked" href="#" style="--d: 0.26s">
+            <span class="portal-core" aria-hidden="true"></span>
+            <div class="portal-content">
+              <span class="link-title">El Mapa</span>
+              <span class="link-desc">Un mapa con sitios para visitar juntos.</span>
+            </div>
+            <span class="portal-lock" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                x="0px"
+                y="0px"
+                width="24"
+                height="24"
+                viewBox="0,0,255.99431,255.99431"
+              >
+                <g
+                  fill="#e3e3e3"
+                  fill-rule="nonzero"
+                  stroke="none"
+                  stroke-width="1"
+                  stroke-linecap="butt"
+                  stroke-linejoin="miter"
+                  stroke-miterlimit="10"
+                  stroke-dasharray=""
+                  stroke-dashoffset="0"
+                  font-family="none"
+                  font-weight="none"
+                  font-size="none"
+                  text-anchor="none"
+                  style="mix-blend-mode: normal"
+                >
+                  <g transform="scale(10.66667,10.66667)">
+                    <path
+                      d="M12,1c-3.32381,0 -6,2.67619 -6,6v1c-1.09306,0 -2,0.90694 -2,2v10c0,1.09306 0.90694,2 2,2h12c1.09306,0 2,-0.90694 2,-2v-10c0,-1.09306 -0.90694,-2 -2,-2v-1c0,-3.32381 -2.67619,-6 -6,-6zM12,3c2.27619,0 4,1.72381 4,4v1h-8v-1c0,-2.27619 1.72381,-4 4,-4zM6,10h12v10h-12zM12,13c-1.1,0 -2,0.9 -2,2c0,1.1 0.9,2 2,2c1.1,0 2,-0.9 2,-2c0,-1.1 -0.9,-2 -2,-2z"
+                    ></path>
+                  </g>
+                </g>
+              </svg>
+            </span>
+          </a>
+
+          <a class="link-card portal-playlist portal-locked" href="#" style="--d: 0.33s">
+            <span class="portal-core" aria-hidden="true"></span>
+            <div class="portal-content">
+              <span class="link-title">Nuestra Playlist</span>
+              <span class="link-desc">Una playlist conjunta de Spotify.</span>
+            </div>
+            <span class="portal-lock" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                x="0px"
+                y="0px"
+                width="24"
+                height="24"
+                viewBox="0,0,255.99431,255.99431"
+              >
+                <g
+                  fill="#e3e3e3"
+                  fill-rule="nonzero"
+                  stroke="none"
+                  stroke-width="1"
+                  stroke-linecap="butt"
+                  stroke-linejoin="miter"
+                  stroke-miterlimit="10"
+                  stroke-dasharray=""
+                  stroke-dashoffset="0"
+                  font-family="none"
+                  font-weight="none"
+                  font-size="none"
+                  text-anchor="none"
+                  style="mix-blend-mode: normal"
+                >
+                  <g transform="scale(10.66667,10.66667)">
+                    <path
+                      d="M12,1c-3.32381,0 -6,2.67619 -6,6v1c-1.09306,0 -2,0.90694 -2,2v10c0,1.09306 0.90694,2 2,2h12c1.09306,0 2,-0.90694 2,-2v-10c0,-1.09306 -0.90694,-2 -2,-2v-1c0,-3.32381 -2.67619,-6 -6,-6zM12,3c2.27619,0 4,1.72381 4,4v1h-8v-1c0,-2.27619 1.72381,-4 4,-4zM6,10h12v10h-12zM12,13c-1.1,0 -2,0.9 -2,2c0,1.1 0.9,2 2,2c1.1,0 2,-0.9 2,-2c0,-1.1 -0.9,-2 -2,-2z"
+                    ></path>
+                  </g>
+                </g>
+              </svg>
+            </span>
+          </a>
+
+          <a class="link-card portal-random portal-locked" href="#" style="--d: 0.4s">
+            <span class="portal-core" aria-hidden="true"></span>
+            <div class="portal-content">
+              <span class="link-title">¿Qué hacemos hoy?</span>
+              <span class="link-desc">Un randomizador de planes para hoy.</span>
+            </div>
+            <span class="portal-lock" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                x="0px"
+                y="0px"
+                width="24"
+                height="24"
+                viewBox="0,0,255.99431,255.99431"
+              >
+                <g
+                  fill="#e3e3e3"
+                  fill-rule="nonzero"
+                  stroke="none"
+                  stroke-width="1"
+                  stroke-linecap="butt"
+                  stroke-linejoin="miter"
+                  stroke-miterlimit="10"
+                  stroke-dasharray=""
+                  stroke-dashoffset="0"
+                  font-family="none"
+                  font-weight="none"
+                  font-size="none"
+                  text-anchor="none"
+                  style="mix-blend-mode: normal"
+                >
+                  <g transform="scale(10.66667,10.66667)">
+                    <path
+                      d="M12,1c-3.32381,0 -6,2.67619 -6,6v1c-1.09306,0 -2,0.90694 -2,2v10c0,1.09306 0.90694,2 2,2h12c1.09306,0 2,-0.90694 2,-2v-10c0,-1.09306 -0.90694,-2 -2,-2v-1c0,-3.32381 -2.67619,-6 -6,-6zM12,3c2.27619,0 4,1.72381 4,4v1h-8v-1c0,-2.27619 1.72381,-4 4,-4zM6,10h12v10h-12zM12,13c-1.1,0 -2,0.9 -2,2c0,1.1 0.9,2 2,2c1.1,0 2,-0.9 2,-2c0,-1.1 -0.9,-2 -2,-2z"
+                    ></path>
+                  </g>
+                </g>
+              </svg>
+            </span>
+          </a>
+
+        </section>
+
+        <footer>
+          Hecho con <span>calma</span> y <span>cuidado</span>.
+        </footer>
+      </div>
+    </main>
+    <div class="lock-modal" aria-hidden="true">
+      <div class="lock-modal-card">Próximamente</div>
+    </div>
+    <script>
+      (() => {
+        const modal = document.querySelector(".lock-modal");
+        const lockedLinks = document.querySelectorAll(".portal-locked");
+        if (!modal || lockedLinks.length === 0) return;
+        let timer;
+
+        const showModal = () => {
+          modal.classList.add("active");
+          document.body.classList.add("modal-open");
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            modal.classList.remove("active");
+            document.body.classList.remove("modal-open");
+          }, 3000);
+        };
+
+        lockedLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            showModal();
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
