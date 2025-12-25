@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
@@ -10,6 +10,10 @@
       href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
     <style>
       :root {
         color-scheme: dark;
@@ -20,6 +24,7 @@
         --muted: #b9b3ab;
         --accent: #d5b1a1;
         --accent-2: #7f8ca4;
+        --reco-pablo: #7ee2b8;
       }
 
       * {
@@ -81,6 +86,58 @@
         justify-items: center;
       }
 
+      .controls {
+        width: min(100%, 1080px);
+        display: grid;
+        gap: 12px;
+        justify-items: center;
+      }
+
+      .search-input {
+        width: min(100%, 420px);
+        padding: 10px 18px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+      }
+
+      .search-input::placeholder {
+        color: var(--muted);
+      }
+
+      .filter-group {
+        display: inline-flex;
+        gap: 8px;
+        padding: 6px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .filter-btn {
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--muted);
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .filter-btn.is-active {
+        color: var(--text);
+        border-color: rgba(220, 79, 74, 0.7);
+        background: rgba(220, 79, 74, 0.18);
+        box-shadow: 0 8px 18px rgba(220, 79, 74, 0.25);
+      }
+
       .list {
         display: grid;
         gap: 22px;
@@ -97,6 +154,24 @@
         text-align: center;
         justify-items: center;
         align-content: start;
+        --reco-color: var(--accent);
+        --reco-border: rgba(213, 177, 161, 0.45);
+        --reco-bg: rgba(213, 177, 161, 0.16);
+        --reco-overlay: rgba(217, 176, 158, 0.35);
+      }
+
+      .film-card.reco-pablo-card {
+        --reco-color: var(--reco-pablo);
+        --reco-border: rgba(126, 226, 184, 0.5);
+        --reco-bg: rgba(126, 226, 184, 0.16);
+        --reco-overlay: rgba(108, 192, 157, 0.35);
+      }
+
+      .film-card.reco-nana-card {
+        --reco-color: var(--accent);
+        --reco-border: rgba(213, 177, 161, 0.45);
+        --reco-bg: rgba(213, 177, 161, 0.16);
+        --reco-overlay: rgba(217, 176, 158, 0.35);
       }
 
       body.page-loaded .film-card {
@@ -109,6 +184,7 @@
         overflow: hidden;
         background: #111;
         width: 100%;
+        position: relative;
         box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
       }
 
@@ -117,6 +193,57 @@
         height: 100%;
         display: block;
         object-fit: cover;
+      }
+
+      .poster::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .poster-mark {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        opacity: 0;
+        transform: scale(0.9);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        pointer-events: none;
+      }
+
+      .poster-mark svg,
+      .poster-mark img {
+        width: clamp(96px, 12vw, 120px);
+        height: clamp(96px, 12vw, 120px);
+        filter: drop-shadow(0 18px 34px rgba(0, 0, 0, 0.65));
+      }
+
+      .poster-mark img {
+        display: block;
+        object-fit: contain;
+      }
+
+      .film-card.is-watched .poster::after {
+        background: var(--reco-overlay);
+        opacity: 1;
+      }
+
+      .film-card.is-in-progress .poster::after {
+        background: rgba(230, 3, 12, 0.35);
+        opacity: 1;
+      }
+
+      .film-card.is-watched .poster-mark--watched {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .film-card.is-in-progress .poster-mark--progress {
+        opacity: 1;
+        transform: scale(1);
       }
 
       .info {
@@ -145,11 +272,12 @@
       .reco {
         padding: 6px 12px;
         border-radius: 999px;
-        border: 1px solid rgba(213, 177, 161, 0.45);
-        color: var(--accent);
+        border: 1px solid var(--reco-border);
         font-size: 12px;
         letter-spacing: 0.12em;
         text-transform: uppercase;
+        background: var(--reco-bg);
+        color: var(--reco-color);
       }
 
       .type-tag {
@@ -187,8 +315,8 @@
 
       .status-btn.is-active {
         color: var(--text);
-        border-color: rgba(213, 177, 161, 0.6);
-        background: rgba(213, 177, 161, 0.16);
+        border-color: var(--reco-border);
+        background: var(--reco-bg);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
       }
 
@@ -263,11 +391,11 @@
         gap: 8px;
         padding: 10px 18px;
         border-radius: 999px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--reco-border);
         background: linear-gradient(
           135deg,
           rgba(255, 255, 255, 0.06),
-          rgba(213, 177, 161, 0.18)
+          var(--reco-bg)
         );
         color: var(--text);
         letter-spacing: 0.18em;
@@ -281,7 +409,7 @@
       summary:hover,
       summary:focus-visible {
         transform: translateY(-2px);
-        border-color: rgba(213, 177, 161, 0.55);
+        border-color: var(--reco-border);
         box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
       }
 
@@ -297,7 +425,7 @@
         padding: 14px 18px;
         border-radius: 18px;
         background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--reco-border);
         animation: info-reveal 0.4s ease;
       }
 
@@ -338,13 +466,64 @@
         }
       }
 
-      @media (max-width: 640px) {
+      @media (max-width: 719px) {
         main {
           padding-top: 72px;
         }
 
         .back {
           position: static;
+        }
+
+        .controls {
+          width: 100%;
+          justify-items: center;
+          text-align: center;
+        }
+
+        .filter-group {
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        .filter-group--status {
+          width: min(100%, 254px);
+        }
+
+        .filter-group--type {
+          width: min(100%, 274px);
+        }
+
+        .filter-group--status,
+        .filter-group--type {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 8px 10px;
+          padding: 4px 6px;
+        }
+
+        .filter-group--status .filter-btn {
+          min-width: 104px;
+        }
+
+        .filter-group--type .filter-btn {
+          min-width: 80px;
+        }
+
+        .filter-btn {
+          text-align: center;
+          letter-spacing: 0.1em;
+          padding: 3px 8px;
+          flex: 0 1 auto;
+        }
+
+        .list {
+          justify-items: center;
+        }
+
+        .film-card {
+          width: min(100%, 360px);
         }
 
         .film-card {
@@ -380,8 +559,49 @@
       <a class="back" href="../index.html">Volver</a>
       <img class="logo" src="logos/logo.png" alt="Our Portal" />
       <div class="shell">
+        <section class="controls" aria-label="Filtros">
+          <input
+            class="search-input"
+            id="search-input"
+            type="search"
+            placeholder="Buscar película o serie..."
+          />
+          <div
+            class="filter-group filter-group--status"
+            role="group"
+            aria-label="Filtro de vista"
+          >
+            <button class="filter-btn is-active" type="button" data-filter="all">
+              Todas
+            </button>
+            <button class="filter-btn" type="button" data-filter="watched">
+              Vistas
+            </button>
+            <button class="filter-btn" type="button" data-filter="progress">
+              En proceso
+            </button>
+            <button class="filter-btn" type="button" data-filter="unwatched">
+              No vistas
+            </button>
+          </div>
+          <div
+            class="filter-group filter-group--type"
+            role="group"
+            aria-label="Filtro de tipo"
+          >
+            <button class="filter-btn is-active" type="button" data-type="all">
+              Todo
+            </button>
+            <button class="filter-btn" type="button" data-type="peli">
+              Pelis
+            </button>
+            <button class="filter-btn" type="button" data-type="serie">
+              Series
+            </button>
+          </div>
+        </section>
         <section class="list">
-          <article class="film-card" data-film-id="interstellar">
+          <article class="film-card reco-pablo-card" data-film-id="interstellar">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/fbUwSqYIP0isCiJXey3staY3DNn.jpg"
@@ -395,23 +615,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -468,7 +696,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="the-martian">
+          <article class="film-card reco-pablo-card" data-film-id="the-martian">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/hBRK1izFxIH3Nh6vax4ssOHSHVd.jpg"
@@ -482,23 +710,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -556,7 +792,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="blast-from-the-past">
+          <article class="film-card reco-pablo-card" data-film-id="blast-from-the-past">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/y0iHhfDnBQdvOiqqPJYTAVOIwO8.jpg"
@@ -570,23 +806,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -677,7 +921,103 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="the-walking-dead">
+          <article class="film-card reco-nana-card" data-film-id="el-libro-de-la-vida">
+            <div class="poster">
+              <img
+                src="https://www.themoviedb.org/t/p/w1280/k669nOalwu7NKhW7aWNJKN7Nxvi.jpg"
+                alt="El libro de la vida"
+              />
+            </div>
+            <div class="info">
+              <div class="title-row">
+                <h2>El libro de la vida</h2>
+                <span class="type-tag">Peli</span>
+                <span class="reco">Reco de Nana</span>
+              </div>
+              <div class="status-control" role="group" aria-label="Estado de vista">
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
+              <p class="status-note" aria-live="polite"></p>
+              <details>
+                <summary>
+                  <strong>+ info</strong>
+                </summary>
+                <div class="info-panel">
+                  <div class="meta">
+                    <span>1h 35min</span>
+                    <span>2014</span>
+                  </div>
+                  <p class="desc">
+                    Una película que a Nana le encanta y la verdad que con razón,
+                    ES GOD.
+                  </p>
+                  <div class="platforms">
+                    <span>Plataformas para ver:</span>
+                    <div class="platform-list">
+                      <span class="platform">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          x="0px"
+                          y="0px"
+                          width="48"
+                          height="48"
+                          viewBox="0,0,255.99431,255.99431"
+                        >
+                          <g
+                            fill="#e6030c"
+                            fill-rule="nonzero"
+                            stroke="none"
+                            stroke-width="1"
+                            stroke-linecap="butt"
+                            stroke-linejoin="miter"
+                            stroke-miterlimit="10"
+                            stroke-dasharray=""
+                            stroke-dashoffset="0"
+                            font-family="none"
+                            font-weight="none"
+                            font-size="none"
+                            text-anchor="none"
+                            style="mix-blend-mode: normal"
+                          >
+                            <g transform="scale(5.33333,5.33333)">
+                              <path
+                                d="M46,24c0,0.698 -0.268,1.396 -0.784,1.923l-6.992,7.05c-0.182,0.182 -0.421,0.287 -0.679,0.287c-0.249,0 -0.497,-0.105 -0.679,-0.287l-6.849,-6.916c-0.373,-0.373 -0.373,-0.976 0,-1.349l8.217,-8.303c0.363,-0.363 1.004,-0.363 1.358,0l5.624,5.672c0.516,0.526 0.784,1.225 0.784,1.923zM11,16.157v15.687c0,0.373 -0.216,0.717 -0.54,0.87c-0.117,0.057 -0.234,0.086 -0.36,0.086c-0.225,0 -0.441,-0.096 -0.612,-0.258l-6.678,-6.6c-0.522,-0.517 -0.81,-1.206 -0.81,-1.942c0,-0.746 0.288,-1.435 0.81,-1.951l6.678,-6.59c0.261,-0.258 0.648,-0.325 0.972,-0.172c0.324,0.143 0.54,0.487 0.54,0.87zM34.574,12.79l-16.908,16.815c-0.185,0.182 -0.439,0.287 -0.692,0.287c-0.127,0 -0.253,-0.029 -0.37,-0.077c-0.36,-0.143 -0.604,-0.497 -0.604,-0.879v-19.791c0,-0.249 0.097,-0.497 0.283,-0.67l5.701,-5.672c0.516,-0.516 1.208,-0.803 1.948,-0.803c0.731,0 1.423,0.287 1.939,0.803l8.702,8.647c0.371,0.373 0.371,0.967 0.001,1.34zM33.282,37.937l-7.357,7.27c-0.517,0.506 -1.21,0.793 -1.951,0.793c-0.732,0 -1.424,-0.287 -1.951,-0.794l-5.737,-5.682c-0.38,-0.373 -0.38,-0.966 0,-1.339l8.616,-8.523c0.361,-0.363 1.015,-0.363 1.385,0l6.996,6.925c0.38,0.374 0.38,0.976 -0.001,1.35z"
+                              ></path>
+                            </g>
+                          </g>
+                        </svg>
+                        Kodi
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </div>
+          </article>
+          <article class="film-card reco-pablo-card" data-film-id="the-walking-dead">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/hUblG1KZCTRpHc3wqqoU0DW98Q3.jpg"
@@ -691,23 +1031,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -799,7 +1147,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="la-monja">
+          <article class="film-card reco-pablo-card" data-film-id="la-monja">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/7fxjwtEvqI1BYkXEbGqJ3dQBgXD.jpg"
@@ -813,23 +1161,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -884,7 +1240,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="annabelle-creation">
+          <article class="film-card reco-pablo-card" data-film-id="annabelle-creation">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/dpdPo1kPE5y1pBopxKnchlSX8i8.jpg"
@@ -898,23 +1254,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -1003,7 +1367,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="la-monja-2">
+          <article class="film-card reco-pablo-card" data-film-id="la-monja-2">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/hbP1KNvyNX8av2sVsOix1za9T4C.jpg"
@@ -1017,23 +1381,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -1122,7 +1494,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="annabelle-2014">
+          <article class="film-card reco-pablo-card" data-film-id="annabelle-2014">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/sFxgTJizaUUI3NByNT80oCVnkA2.jpg"
@@ -1136,23 +1508,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -1241,7 +1621,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="expediente-warren-the-conjuring">
+          <article class="film-card reco-pablo-card" data-film-id="expediente-warren-the-conjuring">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/sKuHxkCogdk6YWzTyXYPoo9qd9n.jpg"
@@ -1255,23 +1635,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -1394,7 +1782,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="annabelle-vuelve-a-casa">
+          <article class="film-card reco-pablo-card" data-film-id="annabelle-vuelve-a-casa">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/zxwPksbRKGaAi06rapPfFTVsMHv.jpg"
@@ -1408,23 +1796,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -1479,7 +1875,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="la-llorona">
+          <article class="film-card reco-pablo-card" data-film-id="la-llorona">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/1BIWytsnEr2aRobU6ERutzewm63.jpg"
@@ -1493,23 +1889,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -1567,7 +1971,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="expediente-warren-el-caso-enfield">
+          <article class="film-card reco-pablo-card" data-film-id="expediente-warren-el-caso-enfield">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/pdNW0HWw11Wn2N94VGea8O44wOA.jpg"
@@ -1581,23 +1985,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -1720,7 +2132,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="expediente-warren-obligado-por-el-demonio">
+          <article class="film-card reco-pablo-card" data-film-id="expediente-warren-obligado-por-el-demonio">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/ghMQALCyytc6W0wlOlMIKiMSRKV.jpg"
@@ -1734,23 +2146,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -1839,7 +2259,7 @@
               </details>
             </div>
           </article>
-          <article class="film-card" data-film-id="expediente-warren-el-ultimo-rito">
+          <article class="film-card reco-pablo-card" data-film-id="expediente-warren-el-ultimo-rito">
             <div class="poster">
               <img
                 src="https://www.themoviedb.org/t/p/w1280/qdoqogLNR6myoRrxYFxF4UTkFne.jpg"
@@ -1853,23 +2273,31 @@
                 <span class="reco">Reco de Pablo</span>
               </div>
               <div class="status-control" role="group" aria-label="Estado de vista">
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="watched"
-                  aria-pressed="false"
-                >
-                  Vista juntos
-                </button>
-                <button
-                  class="status-btn"
-                  type="button"
-                  data-status="unwatched"
-                  aria-pressed="false"
-                >
-                  No vista
-                </button>
-              </div>
+                                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="watched"
+                    aria-pressed="false"
+                  >
+                    Vista
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="progress"
+                    aria-pressed="false"
+                  >
+                    En proceso
+                  </button>
+                  <button
+                    class="status-btn"
+                    type="button"
+                    data-status="unwatched"
+                    aria-pressed="false"
+                  >
+                    No vista
+                  </button>
+                </div>
               <p class="status-note" aria-live="polite"></p>
               <details>
                 <summary>
@@ -1950,15 +2378,115 @@
       const db = getFirestore(app);
 
       const films = document.querySelectorAll("[data-film-id]");
+      const tickIcons = {
+        pablo: `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 255.99431 255.99431" aria-hidden="true">
+            <defs>
+              <linearGradient x1="-0.293" y1="-0.293" x2="64.188" y2="64.188" gradientUnits="userSpaceOnUse" id="color-1_EVyY1EMwkQUW_gr1">
+                <stop offset="0" stop-color="#7dd2af"></stop>
+                <stop offset="1" stop-color="#468d70"></stop>
+              </linearGradient>
+              <linearGradient x1="2.62157" y1="24.46866" x2="44.59684" y2="24.46793" gradientUnits="userSpaceOnUse" id="color-2_EVyY1EMwkQUW_gr2">
+                <stop offset="0" stop-color="#355954" stop-opacity="0"></stop>
+                <stop offset="1" stop-color="#468d70"></stop>
+              </linearGradient>
+              <linearGradient x1="9.039" y1="17.12494" x2="22.65505" y2="33.35021" gradientUnits="userSpaceOnUse" id="color-3_EVyY1EMwkQUW_gr3">
+                <stop offset="0" stop-color="#355954" stop-opacity="0"></stop>
+                <stop offset="1" stop-color="#468d70"></stop>
+              </linearGradient>
+            </defs>
+            <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+              <g transform="scale(5.33333,5.33333)">
+                <circle cx="24" cy="24" r="20" fill="url(#color-1_EVyY1EMwkQUW_gr1)"></circle>
+                <path d="M17.172,30.364l13.435,-13.435c1.172,-1.172 3.071,-1.172 4.243,0l1.707,1.707l-13.436,13.435c-1.172,1.172 -3.071,1.172 -4.243,0z" fill="url(#color-2_EVyY1EMwkQUW_gr2)"></path>
+                <path d="M11.101,24.293l6.071,6.071l3.828,-3.828l-3.95,-3.95c-1.172,-1.172 -3.071,-1.172 -4.243,0z" fill="url(#color-3_EVyY1EMwkQUW_gr3)"></path>
+              </g>
+            </g>
+          </svg>
+        `,
+        nana: `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 255.99431 255.99431" aria-hidden="true">
+            <defs>
+              <linearGradient x1="-0.293" y1="-0.293" x2="64.188" y2="64.188" gradientUnits="userSpaceOnUse" id="color-1_EVyY1EMwkQUW_gr1">
+                <stop offset="0" stop-color="#d29e86"></stop>
+                <stop offset="1" stop-color="#a26e56"></stop>
+              </linearGradient>
+              <linearGradient x1="2.62157" y1="24.46866" x2="44.59684" y2="24.46793" gradientUnits="userSpaceOnUse" id="color-2_EVyY1EMwkQUW_gr2">
+                <stop offset="0" stop-color="#355954" stop-opacity="0"></stop>
+                <stop offset="1" stop-color="#a26e56"></stop>
+              </linearGradient>
+              <linearGradient x1="9.039" y1="17.12494" x2="22.65505" y2="33.35021" gradientUnits="userSpaceOnUse" id="color-3_EVyY1EMwkQUW_gr3">
+                <stop offset="0" stop-color="#355954" stop-opacity="0"></stop>
+                <stop offset="1" stop-color="#a26e56"></stop>
+              </linearGradient>
+            </defs>
+            <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+              <g transform="scale(5.33333,5.33333)">
+                <circle cx="24" cy="24" r="20" fill="url(#color-1_EVyY1EMwkQUW_gr1)"></circle>
+                <path d="M17.172,30.364l13.435,-13.435c1.172,-1.172 3.071,-1.172 4.243,0l1.707,1.707l-13.436,13.435c-1.172,1.172 -3.071,1.172 -4.243,0z" fill="url(#color-2_EVyY1EMwkQUW_gr2)"></path>
+                <path d="M11.101,24.293l6.071,6.071l3.828,-3.828l-3.95,-3.95c-1.172,-1.172 -3.071,-1.172 -4.243,0z" fill="url(#color-3_EVyY1EMwkQUW_gr3)"></path>
+              </g>
+            </g>
+          </svg>
+        `,
+      };
+      const makeTickSvg = (svg, suffix) => {
+        const safeSuffix = String(suffix || "tick").replace(/[^a-z0-9_-]/gi, "");
+        return svg
+          .replace(/id="([^"]+)"/g, (match, id) => `id="${id}-${safeSuffix}"`)
+          .replace(/url\(#([^)]+)\)/g, (match, id) => `url(#${id}-${safeSuffix})`);
+      };
+      const searchInput = document.getElementById("search-input");
+      const filterButtons = document.querySelectorAll("[data-filter]");
+      const typeButtons = document.querySelectorAll("[data-type]");
+      let currentFilter = "all";
+      let currentType = "all";
+      let currentQuery = "";
+
       document.body.classList.add("page-loaded");
       films.forEach((filmEl, index) => {
         filmEl.style.setProperty("--delay", index);
+        const title = filmEl.querySelector("h2");
+        if (title) {
+          filmEl.dataset.title = title.textContent.trim().toLowerCase();
+        }
+        const type = filmEl.querySelector(".type-tag");
+        if (type) {
+          filmEl.dataset.type = type.textContent.trim().toLowerCase();
+        }
       });
 
+      const applyFilters = () => {
+        films.forEach((filmEl) => {
+          const title = filmEl.dataset.title || "";
+          const matchesSearch = title.includes(currentQuery);
+          const isWatched = filmEl.classList.contains("is-watched");
+          const isInProgress = filmEl.classList.contains("is-in-progress");
+          const matchesFilter =
+            currentFilter === "all" ||
+            (currentFilter === "watched" && isWatched) ||
+            (currentFilter === "progress" && isInProgress) ||
+            (currentFilter === "unwatched" && !isWatched && !isInProgress);
+          const matchesType =
+            currentType === "all" || filmEl.dataset.type === currentType;
+          filmEl.style.display =
+            matchesSearch && matchesFilter && matchesType ? "" : "none";
+        });
+      };
+
+      const normalizeStatus = (status) => {
+        if (status === "in-progress") return "progress";
+        if (["watched", "progress", "unwatched"].includes(status)) return status;
+        return "unwatched";
+      };
+
       const setStatusUI = (filmEl, status) => {
+        const normalized = normalizeStatus(status);
+        filmEl.classList.toggle("is-watched", normalized === "watched");
+        filmEl.classList.toggle("is-in-progress", normalized === "progress");
         const buttons = filmEl.querySelectorAll(".status-btn");
         buttons.forEach((btn) => {
-          const isActive = btn.dataset.status === status;
+          const isActive = btn.dataset.status === normalized;
           btn.classList.toggle("is-active", isActive);
           btn.setAttribute("aria-pressed", isActive ? "true" : "false");
         });
@@ -1966,15 +2494,56 @@
         const note = filmEl.querySelector(".status-note");
         if (note) {
           note.textContent =
-            status === "watched"
-              ? "Marcada como vista juntos."
+            normalized === "watched"
+              ? "Marcada como vista."
+              : normalized === "progress"
+              ? "Marcada en proceso."
               : "Marcada como no vista.";
         }
+        applyFilters();
       };
 
-      films.forEach((filmEl) => {
+      if (searchInput) {
+        searchInput.addEventListener("input", (event) => {
+          currentQuery = event.target.value.trim().toLowerCase();
+          applyFilters();
+        });
+      }
+
+      filterButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          currentFilter = btn.dataset.filter;
+          filterButtons.forEach((item) =>
+            item.classList.toggle("is-active", item === btn)
+          );
+          applyFilters();
+        });
+      });
+
+      typeButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          currentType = btn.dataset.type;
+          typeButtons.forEach((item) =>
+            item.classList.toggle("is-active", item === btn)
+          );
+          applyFilters();
+        });
+      });
+
+      films.forEach((filmEl, index) => {
         const filmId = filmEl.dataset.filmId;
         const docRef = doc(db, "watchlist", filmId);
+        const poster = filmEl.querySelector(".poster");
+        if (poster && !poster.querySelector(".poster-mark")) {
+          const markWatched = document.createElement("div");
+          markWatched.className = "poster-mark poster-mark--watched";
+          const iconSuffix = `${filmId || "film"}-${index}`;
+          markWatched.innerHTML = filmEl.classList.contains("reco-pablo-card")
+            ? makeTickSvg(tickIcons.pablo, `pablo-${iconSuffix}`)
+            : makeTickSvg(tickIcons.nana, `nana-${iconSuffix}`);
+          poster.appendChild(markWatched);
+
+        }
 
         onSnapshot(docRef, (snap) => {
           const data = snap.exists() ? snap.data() : {};
