@@ -6,12 +6,16 @@
     <title>Randomizador</title>
     <meta
       name="description"
-      content="Un randomizador de planes para elegir qué hacer hoy."
+      content="Un randomizador de planes para elegir quÃ© hacer hoy."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Sedgwick+Ave+Display&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -46,7 +50,7 @@
           ),
           var(--bg);
         color: var(--text);
-        font-family: "Sedgwick Ave Display", "Segoe UI", sans-serif;
+        font-family: "Jersey 10", "Segoe UI", sans-serif;
       }
 
       main {
@@ -130,6 +134,7 @@
         letter-spacing: 0.26em;
         text-transform: uppercase;
         color: var(--accent);
+        font-family: "Sedgwick Ave Display", "Segoe UI", sans-serif;
       }
 
       h1 {
@@ -137,6 +142,7 @@
         font-size: clamp(32px, 5vw, 44px);
         font-weight: 500;
         letter-spacing: 0.04em;
+        font-family: "Sedgwick Ave Display", "Segoe UI", sans-serif;
       }
 
       .result {
@@ -144,6 +150,7 @@
         font-size: clamp(18px, 3.6vw, 24px);
         color: var(--muted);
         min-height: 2.4em;
+        white-space: pre-line;
       }
 
       .result.is-active {
@@ -164,6 +171,35 @@
         cursor: pointer;
         box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
         transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      .ai-input {
+        width: min(100%, 520px);
+        min-height: 110px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 16px;
+        resize: vertical;
+      }
+
+      .ai-input::placeholder {
+        color: var(--muted);
+      }
+
+      .ai-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+      }
+
+      .random-btn.is-loading {
+        opacity: 0.7;
+        cursor: wait;
       }
 
       .random-btn:hover,
@@ -207,14 +243,23 @@
       <a class="back" href="../index.html">Volver</a>
       <img class="logo" src="logos/logo.png" alt="Randomizador" />
       <section class="card">
-        <p class="eyebrow">Randomizador</p>
         <h1>¿Qué hacemos hoy?</h1>
         <p class="result" id="result" aria-live="polite">
-          Pulsa para descubrir un plan.
+          Escribe la situación y pídeme un plan.
         </p>
-        <button class="random-btn" id="random-btn" type="button">
-          Sorpréndeme
-        </button>
+        <textarea
+          class="ai-input"
+          id="ai-input"
+          placeholder="Ej: Estamos cansados, queremos algo en casa, poco presupuesto."
+        ></textarea>
+        <div class="ai-actions">
+          <button class="random-btn" id="ai-btn" type="button">
+            Pedir plan a la IA
+          </button>
+          <button class="random-btn" id="random-btn" type="button">
+            Sorpréndeme
+          </button>
+        </div>
       </section>
     </main>
     <script>
@@ -231,7 +276,17 @@
 
       const resultEl = document.getElementById("result");
       const buttonEl = document.getElementById("random-btn");
+      const aiInput = document.getElementById("ai-input");
+      const aiButton = document.getElementById("ai-btn");
+      const workerUrl = "https://ourportal.pablomerino2008.workers.dev";
       let lastIndex = -1;
+
+      const setResult = (text) => {
+        resultEl.classList.remove("is-active");
+        void resultEl.offsetWidth;
+        resultEl.textContent = text;
+        resultEl.classList.add("is-active");
+      };
 
       const pickPlan = () => {
         if (plans.length === 0) return;
@@ -242,13 +297,41 @@
           }
         }
         lastIndex = index;
-        resultEl.classList.remove("is-active");
-        void resultEl.offsetWidth;
-        resultEl.textContent = plans[index];
-        resultEl.classList.add("is-active");
+        setResult(plans[index]);
+      };
+
+      const askAI = async () => {
+        const prompt = (aiInput.value || "").trim();
+        if (!prompt) {
+          setResult("Escribe una situación primero.");
+          return;
+        }
+        aiButton.classList.add("is-loading");
+        aiButton.disabled = true;
+        aiButton.textContent = "Pensando...";
+        setResult("La IA está pensando...");
+        try {
+          const response = await fetch(workerUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt }),
+          });
+          if (!response.ok) {
+            throw new Error("Request failed");
+          }
+          const data = await response.json();
+          setResult(data.text || "No pude generar un plan.");
+        } catch (error) {
+          setResult("No pude conectarme con la IA. Inténtalo otra vez.");
+        } finally {
+          aiButton.classList.remove("is-loading");
+          aiButton.disabled = false;
+          aiButton.textContent = "Pedir plan a la IA";
+        }
       };
 
       buttonEl.addEventListener("click", pickPlan);
+      aiButton.addEventListener("click", askAI);
     </script>
   </body>
 </html>
