@@ -3,6 +3,6 @@
   Un portal para guardar recuerdos, pelis pendientes y detalles solo nuestros.
 
 ## Web
-  https://bit.ly/our-portal/
+  https://impaul17.github.io/ourportal/
 
 Hecho con calma y cuidado.
